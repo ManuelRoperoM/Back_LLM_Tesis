@@ -8,7 +8,7 @@ export class UploadTesisService {
   private readonly pdfFolderPath = path.join(__dirname, "../../../../uploads");
   //   console.log("La ruta es : ", pdfFolderPath);
 
-  async extraerTexto(nombreArchivo: string): Promise<string> {
+  async extraerTexto(nombreArchivo: string): Promise<any> {
     const filePath = path.join(this.pdfFolderPath, nombreArchivo);
 
     console.log("Esta ruta es: ", filePath);
@@ -16,9 +16,24 @@ export class UploadTesisService {
     if (!fs.existsSync(filePath)) {
       throw new Error("Archivos no encontrado");
     }
-
     const buffer = fs.readFileSync(filePath);
     const data = await pdfParse(buffer);
-    return data.text;
+    const fullText = data.text;
+    const chunks = this.chunkText(fullText, 5000);
+    return chunks;
+  }
+
+  chunkText(text: string, chunkSize: number): any {
+    const chunks = {};
+    let chunk = 1;
+    for (let i = 0; i < text.length; i += chunkSize) {
+      const texto = text.slice(i, i + chunkSize);
+      chunks[`chunk_${chunk}`] = {
+        chunk: chunk.toString(),
+        texto,
+      };
+      chunk++;
+    }
+    return chunks;
   }
 }
