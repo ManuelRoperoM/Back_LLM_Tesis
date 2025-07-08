@@ -19,8 +19,9 @@ export class UploadTesisService {
     }
     const buffer = fs.readFileSync(filePath);
     const data = await pdfParse(buffer);
-    const fullText = data.text;
-    const chunks = this.chunkText(fullText, 5000);
+    const rawText = data.text;
+    const text: string = this.cleanText(rawText);
+    const chunks = this.chunkText(text, 5000);
     const rakes = this.applyRake(chunks);
 
     return rakes;
@@ -59,5 +60,16 @@ export class UploadTesisService {
     }
 
     return resultados;
+  }
+  private cleanText(text: string): string {
+    const cleanText = text
+      .normalize("NFD")
+      .replace(/ı/g, "i")
+      .replace(/([a-zA-Z])\s*[\u0300-\u036f]+\s*([a-zA-Z])/g, "$1$2")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\r?\n|\r/g, " ")
+      .toLocaleLowerCase()
+      .trim();
+    return cleanText;
   }
 }
