@@ -6,6 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   await app.listen(process.env.PORT ?? 3000);
   const url = await app.getUrl();
+  // DEBUG=* npm run start:dev
   console.log(`🚀 App is running at: ${url}`);
 }
 bootstrap();
