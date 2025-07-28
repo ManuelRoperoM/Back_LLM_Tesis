@@ -5,12 +5,22 @@ import * as pdfParse from "pdf-parse";
 import rake from "rake-js";
 import { EmbeddingService } from "src/embedding/embedding.service";
 import { encoding_for_model } from "tiktoken";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class UploadTesisService {
-  constructor(private readonly embeddingService: EmbeddingService) {}
-  private readonly pdfFolderPath = path.join(__dirname, "../../../../uploads");
+  constructor(
+    private readonly embeddingService: EmbeddingService,
+    private readonly configService: ConfigService,
+  ) {}
+
+  private UPLOADS_TESIS = this.configService.get<string>("UPLOADS_TESIS");
+  private readonly pdfFolderPath = path.join(__dirname, this.UPLOADS_TESIS);
+
   async extraerTexto(nombreArchivo: string): Promise<any> {
+    const apiUrl = this.configService.get<string>("EMBEDDING_API_URL");
+    const DATASET_FOLDER = this.configService.get<string>("DATASET_FOLDER");
+    const CHUNK_SIZE = this.configService.get<string>("CHUNK_MAX_TOKENS");
     const filePath = path.join(this.pdfFolderPath, nombreArchivo);
     if (!fs.existsSync(filePath)) {
       throw new Error("Archivos no encontrado");
@@ -20,8 +30,44 @@ export class UploadTesisService {
     const data = await pdfParse(buffer);
     const rawText = data.text;
     const text: string = this.cleanText(rawText);
-    const chunks = this.chunkText(text, 200);
-    return chunks;
+    const chunks = this.chunkText(text, parseInt(CHUNK_SIZE));
+
+    const results = [];
+    for (const item of chunks) {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "nomic-embed-text",
+          prompt: item.texto,
+        }),
+      });
+      if (!response.ok) {
+        console.error(`Error con el chunk: ${item.slice(0, 30)}...`);
+        continue;
+      }
+
+      const data = await response.json();
+
+      results.push({
+        chunk: item.chunk,
+        text: item.texto,
+        embedding: data.embedding,
+      });
+    }
+
+    // Guardar en archivo JSON
+    const outputPath = path.join(
+      __dirname,
+      DATASET_FOLDER,
+      `embeddings_${nombreArchivo}.json`,
+    );
+    fs.writeFileSync(outputPath, JSON.stringify(results, null, 2), "utf-8");
+    console.log(`Embeddings guardados en ${outputPath}`);
+
+    return results;
   }
 
   //Metodos upload services
@@ -31,7 +77,7 @@ export class UploadTesisService {
     const overlap: number = 50;
     const encoder = encoding_for_model(modelName);
     const tokens = encoder.encode(text);
-    const chunks = {};
+    const chunks = [];
     let chunk = 1;
 
     let start = 0;
@@ -40,10 +86,10 @@ export class UploadTesisService {
       const end = Math.min(start + maxTokens, tokens.length);
       const chunkTokens = tokens.slice(start, end);
       const chunkText = new TextDecoder().decode(encoder.decode(chunkTokens));
-      chunks[`chunk_${chunk}`] = {
+      chunks.push({
         chunk: chunk.toString(),
         texto: chunkText,
-      };
+      });
 
       start += maxTokens - overlap; // mueve la ventana con solapamiento
       chunk++;
