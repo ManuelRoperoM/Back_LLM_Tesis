@@ -18,7 +18,6 @@ export class UploadTesisService {
   private readonly pdfFolderPath = path.join(__dirname, this.UPLOADS_TESIS);
 
   async extraerTexto(nombreArchivo: string): Promise<any> {
-    const apiUrl = this.configService.get<string>("EMBEDDING_API_URL");
     const DATASET_FOLDER = this.configService.get<string>("DATASET_FOLDER");
     const CHUNK_SIZE = this.configService.get<string>("CHUNK_MAX_TOKENS");
     const filePath = path.join(this.pdfFolderPath, nombreArchivo);
@@ -34,23 +33,7 @@ export class UploadTesisService {
 
     const results = [];
     for (const item of chunks) {
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "nomic-embed-text",
-          prompt: item.texto,
-        }),
-      });
-      if (!response.ok) {
-        console.error(`Error con el chunk: ${item.slice(0, 30)}...`);
-        continue;
-      }
-
-      const data = await response.json();
-
+      const data = await this.embeddingService.emmbeddingText(item);
       results.push({
         chunk: item.chunk,
         text: item.texto,

@@ -5,11 +5,13 @@ import { UploadTesisModule } from "./upload-tesis/upload-tesis.module";
 import { EmbeddingService } from "./embedding/embedding.service";
 import { EmbeddingModule } from "./embedding/embedding.module";
 import { ConfigModule } from "@nestjs/config";
+import { AskUserModule } from "./ask-user/ask-user.module";
 
 @Module({
   imports: [
     UploadTesisModule,
     EmbeddingModule,
+    AskUserModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
