@@ -6,6 +6,7 @@ import { EmbeddingService } from "./embedding/embedding.service";
 import { EmbeddingModule } from "./embedding/embedding.module";
 import { ConfigModule } from "@nestjs/config";
 import { AskUserModule } from "./ask-user/ask-user.module";
+import { LlmModule } from "./llm/llm.module";
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AskUserModule } from "./ask-user/ask-user.module";
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    LlmModule,
   ],
   controllers: [AppController],
   providers: [AppService, EmbeddingService],
