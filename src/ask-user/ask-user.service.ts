@@ -5,6 +5,10 @@ import { EmbeddingService } from "src/embedding/embedding.service";
 import * as fs from "fs";
 import * as path from "path";
 import { LlmService } from "src/llm/llm.service";
+import { InjectRepository } from "@nestjs/typeorm";
+import { ChunkTesis } from "src/upload-tesis/entites/chunks-tesis.entity";
+import { Repository } from "typeorm";
+import { Tesis } from "src/upload-tesis/entites/tesis.entity";
 
 @Injectable()
 export class AskUserService {
@@ -12,17 +16,29 @@ export class AskUserService {
     private readonly configService: ConfigService,
     private readonly embeddingService: EmbeddingService,
     private readonly llmService: LlmService,
+    @InjectRepository(ChunkTesis)
+    private readonly chunkTesisRepo: Repository<ChunkTesis>,
+    @InjectRepository(Tesis)
+    private readonly thesisRepo: Repository<Tesis>,
   ) {}
+
   async responseAskUser(data: UserAskDto): Promise<any> {
     const embeddingAskUser = await this.embeddingService.emmbeddingText(
       data.msge,
     );
+
     const userEmbedding = embeddingAskUser.embedding;
 
     //Carga de contenido de la tesis :
-    const tesis = await this.loadEmbeddingsFromFile();
+    const thesis = await this.thesisRepo.findOne({
+      where: { id: data.idThesis },
+    });
 
-    const compare = tesis.map((chunk) => {
+    const chunks = await this.chunkTesisRepo.find({
+      where: { thesis: { id: data.idThesis } },
+    });
+
+    const compare = chunks.map((chunk) => {
       const similarity = this.embeddingService.embeddingCompare(
         userEmbedding,
         chunk.embedding,
@@ -45,7 +61,10 @@ export class AskUserService {
       """
       ${question}
       """
-      
+      Tutulo de la tesis:
+      """
+      ${thesis.title}
+      """
       Fragmentos de la tesis relevantes para la pregunta:
       """
       ${context}

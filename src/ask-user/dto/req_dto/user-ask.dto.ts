@@ -7,5 +7,5 @@ export class UserAskDto {
 
   @IsNumber()
   @IsNotEmpty()
-  idTesis: string;
+  idThesis: number;
 }
