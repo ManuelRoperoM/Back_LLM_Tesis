@@ -3,6 +3,8 @@ import { DataSource } from "typeorm";
 import { Tesis } from "./upload-tesis/entites/tesis.entity";
 import { User } from "./user/entities/user.entity";
 import { ChunkTesis } from "./upload-tesis/entites/chunks-tesis.entity";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 export const AppDataSource = new DataSource({
   type: "mysql",

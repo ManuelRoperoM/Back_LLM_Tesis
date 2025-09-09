@@ -5,6 +5,7 @@ import { ConfigService } from "@nestjs/config";
 export class EmbeddingService {
   constructor(private readonly configService: ConfigService) {}
   private API_URL = this.configService.get<string>("EMBEDDING_API_URL");
+
   async emmbeddingText(text: string) {
     const response = await fetch(this.API_URL, {
       method: "POST",
@@ -16,8 +17,8 @@ export class EmbeddingService {
         prompt: text,
       }),
     });
-
-    const data = response.json();
+    const data = await response.json();
+    console.log("Text: ", text);
     return data;
   }
 

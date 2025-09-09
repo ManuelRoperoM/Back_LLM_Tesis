@@ -6,19 +6,65 @@ import rake from "rake-js";
 import { EmbeddingService } from "src/embedding/embedding.service";
 import { encoding_for_model } from "tiktoken";
 import { ConfigService } from "@nestjs/config";
+import { Tesis } from "./entites/tesis.entity";
+import { ChunkTesis } from "./entites/chunks-tesis.entity";
+import { Repository } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "src/user/entities/user.entity";
 
 @Injectable()
 export class UploadTesisService {
   constructor(
     private readonly embeddingService: EmbeddingService,
     private readonly configService: ConfigService,
+    @InjectRepository(Tesis)
+    private readonly thesisRepository: Repository<Tesis>,
+    @InjectRepository(ChunkTesis)
+    private readonly chunksRepository: Repository<ChunkTesis>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   private UPLOADS_TESIS = this.configService.get<string>("UPLOADS_TESIS");
   private readonly pdfFolderPath = path.join(__dirname, this.UPLOADS_TESIS);
 
-  async extraerTexto(nombreArchivo: string): Promise<any> {
-    const DATASET_FOLDER = this.configService.get<string>("DATASET_FOLDER");
+  async saveTesis(
+    nameFile: string,
+    idUser: number,
+    title: string,
+  ): Promise<any> {
+    const thesisData = await this.generateText(nameFile);
+    const user = await this.userRepository.findOneBy({ id: idUser });
+    if (!user) {
+      throw new Error(`Usuario con id ${idUser} no encontrado`);
+    }
+
+    const thesis = await this.thesisRepository.create({
+      name: nameFile,
+      title: title,
+      user,
+    });
+
+    await this.thesisRepository.save(thesis);
+
+    // Guardamos los chunks asociados
+    const chunks = thesisData.map((chunk) =>
+      this.chunksRepository.create({
+        chunkNumber: chunk.chunk,
+        text: chunk.text,
+        embedding: chunk.embedding,
+        thesis,
+      }),
+    );
+
+    await this.chunksRepository.save(chunks);
+
+    return { status: 200, msge: "trabajo de grado cargado exitosamente" };
+  }
+
+  //Metodos upload services
+
+  async generateText(nombreArchivo: string): Promise<any> {
     const CHUNK_SIZE = this.configService.get<string>("CHUNK_MAX_TOKENS");
     const filePath = path.join(this.pdfFolderPath, nombreArchivo);
     if (!fs.existsSync(filePath)) {
@@ -33,7 +79,7 @@ export class UploadTesisService {
 
     const results = [];
     for (const item of chunks) {
-      const data = await this.embeddingService.emmbeddingText(item);
+      const data = await this.embeddingService.emmbeddingText(item.texto);
       results.push({
         chunk: item.chunk,
         text: item.texto,
@@ -41,20 +87,8 @@ export class UploadTesisService {
       });
     }
 
-    // Guardar en archivo JSON
-    const outputPath = path.join(
-      __dirname,
-      DATASET_FOLDER,
-      `embeddings_${nombreArchivo}.json`,
-    );
-    fs.writeFileSync(outputPath, JSON.stringify(results, null, 2), "utf-8");
-    console.log(`Embeddings guardados en ${outputPath}`);
-
     return results;
   }
-
-  //Metodos upload services
-
   private chunkText(text: string, maxTokens: number): any {
     const modelName = "gpt-3.5-turbo";
     const overlap: number = 50;

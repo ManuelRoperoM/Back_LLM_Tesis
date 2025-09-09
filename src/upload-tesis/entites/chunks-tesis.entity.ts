@@ -15,10 +15,10 @@ export class ChunkTesis {
   @Column({ name: "chunk-number" })
   chunkNumber: number;
 
-  @Column()
+  @Column("longtext")
   text: string;
 
-  @Column("simple-array")
+  @Column("json")
   embedding: number[];
 
   @ManyToOne(() => Tesis, (thesis) => thesis.chunk, { onDelete: "CASCADE" })

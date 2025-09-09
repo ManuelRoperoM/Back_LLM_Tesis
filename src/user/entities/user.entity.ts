@@ -13,10 +13,10 @@ export class User {
   email: string;
 
   @Column({ name: "code-student", unique: true })
-  codeStudent: number;
+  codeStudent: string;
 
   @Column({ unique: true })
-  identification: number;
+  identification: string;
 
   @OneToMany(() => Tesis, (thesis) => thesis.user)
   theses: Tesis[];
