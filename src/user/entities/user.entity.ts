@@ -18,6 +18,9 @@ export class User {
   @Column({ unique: true })
   identification: string;
 
+  @Column()
+  phone: number;
+
   @OneToMany(() => Tesis, (thesis) => thesis.user)
   theses: Tesis[];
 }

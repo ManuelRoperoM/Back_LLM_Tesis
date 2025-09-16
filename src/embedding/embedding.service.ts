@@ -18,7 +18,6 @@ export class EmbeddingService {
       }),
     });
     const data = await response.json();
-    console.log("Text: ", text);
     return data;
   }
 
