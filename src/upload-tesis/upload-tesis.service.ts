@@ -59,7 +59,11 @@ export class UploadTesisService {
 
     await this.chunksRepository.save(chunks);
 
-    return { status: 200, msge: "trabajo de grado cargado exitosamente" };
+    return {
+      status: 200,
+      msge: "trabajo de grado cargado exitosamente",
+      idThesis: thesis.id,
+    };
   }
 
   //Metodos upload services
