@@ -15,12 +15,6 @@ export class User {
   @Column({ name: "code-student", unique: true })
   codeStudent: string;
 
-  @Column({ unique: true })
-  identification: string;
-
-  @Column()
-  phone: number;
-
   @OneToMany(() => Tesis, (thesis) => thesis.user)
   theses: Tesis[];
 }
