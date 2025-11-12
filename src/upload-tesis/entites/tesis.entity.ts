@@ -8,6 +8,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { ChunkTesis } from "./chunks-tesis.entity";
+import { Conversation } from "src/conversation/entities/conversation.entity";
 
 @Entity("tesis")
 export class Tesis {
@@ -26,4 +27,7 @@ export class Tesis {
 
   @OneToMany(() => ChunkTesis, (chunk) => chunk.thesis)
   chunk: ChunkTesis[];
+
+  @OneToMany(() => Conversation, (conversation) => conversation.thesis)
+  conversation: Conversation[];
 }

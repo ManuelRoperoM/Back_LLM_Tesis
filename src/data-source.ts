@@ -4,6 +4,7 @@ import { Tesis } from "./upload-tesis/entites/tesis.entity";
 import { User } from "./user/entities/user.entity";
 import { ChunkTesis } from "./upload-tesis/entites/chunks-tesis.entity";
 import * as dotenv from "dotenv";
+import { Conversation } from "./conversation/entities/conversation.entity";
 dotenv.config();
 
 export const AppDataSource = new DataSource({
@@ -15,6 +16,6 @@ export const AppDataSource = new DataSource({
   database: process.env.DATABASE,
   synchronize: false,
   logging: true,
-  entities: [Tesis, User, ChunkTesis],
+  entities: [Tesis, User, ChunkTesis, Conversation],
   migrations: ["src/migrations/*{.ts,.js}"],
 });

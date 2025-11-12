@@ -12,6 +12,8 @@ import { UserModule } from "./user/user.module";
 import { Tesis } from "./upload-tesis/entites/tesis.entity";
 import { User } from "./user/entities/user.entity";
 import { ChunkTesis } from "./upload-tesis/entites/chunks-tesis.entity";
+import { ConversationModule } from "./conversation/conversation.module";
+import { Conversation } from "./conversation/entities/conversation.entity";
 
 @Module({
   imports: [
@@ -27,13 +29,14 @@ import { ChunkTesis } from "./upload-tesis/entites/chunks-tesis.entity";
       database: process.env.DATABASE,
       synchronize: false,
       logging: true,
-      entities: [Tesis, User, ChunkTesis],
+      entities: [Tesis, User, ChunkTesis, Conversation],
     }),
     UploadTesisModule,
     EmbeddingModule,
     AskUserModule,
     LlmModule,
     UserModule,
+    ConversationModule,
   ],
   controllers: [AppController],
   providers: [AppService, EmbeddingService],
