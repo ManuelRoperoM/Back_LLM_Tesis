@@ -41,11 +41,12 @@ export class AskUserService {
         "botEmbedding",
         "userMessage",
         "botResponse",
+        "createdAt",
       ],
       order: { createdAt: "DESC" },
       take: 500,
     });
-
+    // [ compare -1  y 1  ] + created AT
     const rankedByUser = pastConversations.map((conv) => ({
       conv,
       similarity: this.embeddingService.embeddingCompare(
@@ -86,6 +87,8 @@ export class AskUserService {
       )
       .join("\n");
 
+    console.log("ConversionContext: ", conversationContext);
+
     //Carga de contenido de la tesis :
     const thesis = await this.thesisRepo.findOne({
       where: { id: data.idThesis },
@@ -109,6 +112,8 @@ export class AskUserService {
 
     const context = importantChunks.map((c) => c.text).join("\n\n");
 
+    console.log("Contexto de la tesis: ", context);
+
     const question = `Pregunta del usuario: ${data.msge}`;
     // To Do Add the context conversation in the prompt
     const prompt = `
@@ -116,21 +121,26 @@ export class AskUserService {
       
       Responde de manera clara, concisa y formal. Si no hay suficiente información en el contexto para responder con certeza, indícalo explícitamente.
       
-      Pregunta del estudiante:
+      ===== CONTEXTUALIZACION =====
+
+      === PREGUNTA DEL ESTUDIANTE: ===
       """
       ${question}
       """
-      Tutulo de la tesis:
+      === TITULO DE LA TESIS: ===
       """
       ${thesis.title}
       """
-      Fragmentos de la tesis relevantes para la pregunta:
+      === FREGMENTOS RELEVANTES DE MI TESIS ===
       """
       ${context}
       """
 
-      === CONVERSACIONES PREVIAS RELEVANTES ===
+      === TEN ENCUENTA EL SIGUIENTE CONTESTO DE  CONVERSACIONES PREVIAS RELEVANTES CONTIGO ===
       ${conversationContext}
+
+      ===== FIN CONTEXTUALIZACION =====
+
       
       Responde de forma clara, formal y concisa.
       `;
@@ -146,7 +156,7 @@ export class AskUserService {
       userMessage: data.msge,
       botResponse: response,
       userEmbedding: userEmbedding,
-      botEmbedding: responseEmbedding,
+      botEmbedding: responseEmbedding.embedding,
       thesis: thesis,
     });
 

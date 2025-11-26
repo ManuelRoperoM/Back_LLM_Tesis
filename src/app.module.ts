@@ -28,7 +28,7 @@ import { Conversation } from "./conversation/entities/conversation.entity";
       password: process.env.PASSWORD,
       database: process.env.DATABASE,
       synchronize: false,
-      logging: true,
+      logging: false,
       entities: [Tesis, User, ChunkTesis, Conversation],
     }),
     UploadTesisModule,

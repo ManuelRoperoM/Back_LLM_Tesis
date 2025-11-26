@@ -15,7 +15,7 @@ export const AppDataSource = new DataSource({
   password: process.env.PASSWORD,
   database: process.env.DATABASE,
   synchronize: false,
-  logging: true,
+  logging: false,
   entities: [Tesis, User, ChunkTesis, Conversation],
   migrations: ["src/migrations/*{.ts,.js}"],
 });

@@ -15,7 +15,8 @@ export class LlmService {
     const response = await this.httpService.axiosRef.post(
       url,
       {
-        model: "llama3.2:3b",
+        // model: "llama3.2:3b",
+        model: "qwen2.5:14b",
         prompt: prompt,
         stream: true,
       },
