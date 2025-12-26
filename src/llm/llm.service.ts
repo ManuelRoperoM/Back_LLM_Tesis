@@ -1,49 +1,18 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
 import { ConfigService } from "@nestjs/config";
-import * as readline from "readline";
+import { LLMAdapter } from "./llm.adapter";
+import { LLM_ADAPTER } from "./llm.constants";
 
 @Injectable()
 export class LlmService {
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
+    @Inject(LLM_ADAPTER)
+    private readonly llm: LLMAdapter,
   ) {}
   async generateAnswer(prompt: string): Promise<string> {
-    const url = this.configService.get<string>("URL_LLM");
-
-    const response = await this.httpService.axiosRef.post(
-      url,
-      {
-        // model: "llama3.2:3b",
-        model: "qwen2.5:14b",
-        prompt: prompt,
-        stream: true,
-      },
-      {
-        responseType: "stream",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-    const rl = readline.createInterface({
-      input: response.data,
-      crlfDelay: Infinity,
-    });
-    let fullText = "";
-
-    for await (const line of rl) {
-      if (line.trim() === "") continue;
-      try {
-        const parsed = JSON.parse(line);
-        fullText += parsed.response;
-        if (parsed.done) break;
-      } catch (e) {
-        console.warn("Línea inválida:", e);
-      }
-    }
-
-    return fullText.trim();
+    return this.llm.generate(prompt);
   }
 }

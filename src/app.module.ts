@@ -6,7 +6,7 @@ import { EmbeddingService } from "./embedding/embedding.service";
 import { EmbeddingModule } from "./embedding/embedding.module";
 import { ConfigModule } from "@nestjs/config";
 import { AskUserModule } from "./ask-user/ask-user.module";
-import { LlmModule } from "./llm/llm.module";
+import { LLMModule } from "./llm/llm.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UserModule } from "./user/user.module";
 import { Tesis } from "./upload-tesis/entites/tesis.entity";
@@ -34,7 +34,7 @@ import { Conversation } from "./conversation/entities/conversation.entity";
     UploadTesisModule,
     EmbeddingModule,
     AskUserModule,
-    LlmModule,
+    LLMModule,
     UserModule,
     ConversationModule,
   ],
