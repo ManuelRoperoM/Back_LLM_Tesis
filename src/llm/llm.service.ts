@@ -40,11 +40,9 @@ export class LlmService {
         contentType: "application/json",
         accept: "application/json",
         body: JSON.stringify({
-          inputText: prompt,
-          textGenerationConfig: {
-            maxTokenCount: maxTokens,
-            temperature: temperature,
-          },
+          prompt,
+          temperature: temperature,
+          max_gen_len: maxTokens,
         }),
       });
 
