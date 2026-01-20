@@ -52,7 +52,7 @@ export class LlmService {
       const result = JSON.parse(Buffer.from(response.body).toString("utf-8"));
 
       // Titan devuelve el texto generado en result.outputText
-      return result.outputText || "No se pudo generar respuesta";
+      return result.generation || "No se pudo generar respuesta";
     } catch (error) {
       console.error("❌ Error generando respuesta con Bedrock:", error);
       throw new InternalServerErrorException(
