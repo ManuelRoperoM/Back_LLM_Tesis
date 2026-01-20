@@ -154,7 +154,7 @@ export class AskUserService {
       userMessage: data.msge,
       botResponse: response,
       userEmbedding: userEmbedding,
-      botEmbedding: responseEmbedding.embedding,
+      botEmbedding: responseEmbedding,
       thesis: thesis,
     });
 
