@@ -7,7 +7,7 @@ import { BedrockRuntimeClient } from "@aws-sdk/client-bedrock-runtime";
       provide: "BEDROCK_CLIENT",
       useFactory: () =>
         new BedrockRuntimeClient({
-          region: process.env.AWS_REGION || "us-east-1",
+          region: process.env.AWS_REGION || "us-east-2",
         }),
     },
   ],

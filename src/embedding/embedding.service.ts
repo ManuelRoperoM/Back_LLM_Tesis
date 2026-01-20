@@ -1,24 +1,38 @@
-import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { InvokeModelCommand } from "@aws-sdk/client-bedrock-runtime";
+import { BedrockRuntimeClient } from "@aws-sdk/client-bedrock-runtime";
 
 @Injectable()
 export class EmbeddingService {
-  constructor(private readonly configService: ConfigService) {}
-  private API_URL = this.configService.get<string>("EMBEDDING_API_URL");
+  private readonly bedrockClient: BedrockRuntimeClient;
+  constructor() {
+    this.bedrockClient = new BedrockRuntimeClient({
+      region: process.env.AWS_REGION || "us-east-2",
+    });
+  }
 
   async emmbeddingText(text: string) {
-    const response = await fetch(this.API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "nomic-embed-text",
-        prompt: text,
-      }),
-    });
-    const data = await response.json();
-    return data;
+    try {
+      const command = new InvokeModelCommand({
+        modelId: "amazon.titan-embed-text-v2:0",
+        contentType: "application/json",
+        accept: "application/json",
+        body: JSON.stringify({
+          inputText: text,
+        }),
+      });
+
+      const response = await this.bedrockClient.send(command);
+
+      const result = JSON.parse(Buffer.from(response.body).toString("utf-8"));
+
+      return result.embedding; // vector de 1024 dimensiones
+    } catch (error) {
+      console.error("❌ Error generando embedding (Titan):", error);
+      throw new InternalServerErrorException(
+        "No se pudo generar el embedding con Amazon Titan",
+      );
+    }
   }
 
   embeddingCompare(vecA: number[], vecB: number[]) {
