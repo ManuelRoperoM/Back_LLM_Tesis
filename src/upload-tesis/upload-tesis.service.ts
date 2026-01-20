@@ -87,7 +87,7 @@ export class UploadTesisService {
       results.push({
         chunk: item.chunk,
         text: item.texto,
-        embedding: data.embedding,
+        embedding: data,
       });
     }
 
