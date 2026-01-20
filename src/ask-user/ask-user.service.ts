@@ -26,11 +26,9 @@ export class AskUserService {
   ) {}
 
   async responseAskUser(data: UserAskDto): Promise<any> {
-    const embeddingAskUser = await this.embeddingService.emmbeddingText(
-      data.msge,
-    );
+    const userEmbedding = await this.embeddingService.emmbeddingText(data.msge);
 
-    const userEmbedding = embeddingAskUser.embedding;
+    // const userEmbedding = embeddingAskUser.embedding;
 
     // Ultimas 50 conversaciones
     const pastConversations = await this.conversationRepo.find({
