@@ -36,7 +36,7 @@ export class LlmService {
   ): Promise<string> {
     try {
       const command = new InvokeModelCommand({
-        modelId: "amazon.titan-text-express-v1", // Ajusta aquí al modelo que quieras usar
+        modelId: "meta.llama3-3-70b-instruct-v1:0", // Ajusta aquí al modelo que quieras usar
         contentType: "application/json",
         accept: "application/json",
         body: JSON.stringify({
