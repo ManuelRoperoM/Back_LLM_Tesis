@@ -17,23 +17,41 @@ export class BedrockAdapter implements LLMAdapter {
   ) {}
   async generate(prompt: string): Promise<string> {
     try {
+      // const command = new InvokeModelCommand({
+      //   modelId: "amazon.titan-text-express-v1",
+      //   contentType: "application/json",
+      //   accept: "application/json",
+      //   body: JSON.stringify({
+      //     messages: [{ role: "user", content: prompt }],
+      //     max_tokens: 500,
+      //     temperature: 0.2,
+      //   }),
+      // });
+
       const command = new InvokeModelCommand({
-        modelId: "openai.gpt-oss-20b-1:0",
+        modelId: "amazon.titan-text-express-v1",
         contentType: "application/json",
         accept: "application/json",
         body: JSON.stringify({
-          messages: [{ role: "user", content: prompt }],
-          max_tokens: 500,
-          temperature: 0.2,
+          inputText: prompt,
+          textGenerationConfig: {
+            maxTokenCount: 500,
+            temperature: 0.2,
+          },
         }),
       });
 
-      const response = await this.client.send(command);
-      const result = JSON.parse(Buffer.from(response.body).toString());
+      // const response = await this.client.send(command);
+      // const result = JSON.parse(Buffer.from(response.body).toString());
 
-      return (
-        result.choices?.[0]?.message?.content ?? "No se pudo generar respuesta"
-      );
+      // return (
+      //   result.choices?.[0]?.message?.content ?? "No se pudo generar respuesta"
+      // );
+
+      const response = await this.client.send(command);
+      const result = JSON.parse(Buffer.from(response.body).toString("utf-8"));
+
+      return result.results?.[0]?.outputText ?? "No se pudo generar respuesta";
     } catch (error) {
       throw new InternalServerErrorException(
         `Error generando respuesta con Bedrock: ${error}`,
