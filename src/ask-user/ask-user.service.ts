@@ -140,45 +140,53 @@ export class AskUserService {
     //   `;
 
     const prompt = `
-    Eres un asesor académico experto en trabajos de grado universitarios.
+    Eres un asesor académico experto en tesis universitarias.
+    Tu función es responder preguntas del estudiante utilizando EXCLUSIVAMENTE
+    la información contenida en los fragmentos de la tesis proporcionados.
     
-    Tu función es responder la pregunta del estudiante utilizando únicamente la información relevante de su tesis cuando sea necesario.
+    Reglas estrictas de respuesta:
+    - Responde en texto plano, sin bloques de código ni markdown
+    - No repitas la respuesta
+    - No incluyas explicaciones meta (ej: "según el contexto")
+    - Sé claro, formal y conciso
+    - Si la información no está en la tesis, indícalo explícitamente
     
-    Instrucciones:
-    - Responde solo en lenguaje natural.
-    - No incluyas código, etiquetas, secciones, numeraciones ni fragmentos literales.
-    - No repitas la pregunta.
-    - Si la pregunta no está relacionada con la tesis, responde de forma general y breve.
-    - Si la información no está presente en el contexto, indícalo explícitamente.
+    ===== CONTEXTO DE LA TESIS =====
     
     Título de la tesis:
-    ${thesis.title}
+    "${thesis.title}"
     
-    Contexto relevante de la tesis:
-    ${context}
-
-
-    Resumen de conversaciones previas relevantes:
-    ${summarizedConversationContext || "No hay antecedentes relevantes."}
+    Fragmentos relevantes:
+    "${context}"
     
-    Pregunta del estudiante:
-    ${question}
+    ===== MEMORIA CONVERSACIONAL RELEVANTE (uso interno) =====
+    Usa esta información solo para mantener coherencia y evitar redundancias.
+    No la menciones ni la repitas en la respuesta.
     
-    Respuesta:
+    ${summarizedConversationContext}
+    
+    ===== PREGUNTA DEL ESTUDIANTE =====
+    "${question}"
+    
+    ===== FIN DEL CONTEXTO =====
+    
+    Redacta una única respuesta clara y académica.
     `;
 
     console.log("Prompt: ", prompt);
 
     const response = await this.llmService.generateAnswer(prompt);
 
+    const cleanResponse = this.cleanLLMResponse(response);
+
     //To Do Save the question and de response in the conversation LLM
 
     const responseEmbedding =
-      await this.embeddingService.emmbeddingText(response);
+      await this.embeddingService.emmbeddingText(cleanResponse);
 
     await this.conversationRepo.save({
       userMessage: data.msge,
-      botResponse: response,
+      botResponse: cleanResponse,
       userEmbedding: userEmbedding,
       botEmbedding: responseEmbedding,
       thesis: thesis,
@@ -198,5 +206,13 @@ export class AskUserService {
     const fileContent = fs.readFileSync(filePath, "utf-8");
     const data = JSON.parse(fileContent);
     return data;
+  }
+
+  cleanLLMResponse(text: string) {
+    return text
+      .replace(/```[\s\S]*?```/g, "") // elimina bloques de código
+      .replace(/`+/g, "") // elimina backticks sueltos
+      .replace(/\n{3,}/g, "\n\n") // normaliza saltos
+      .trim();
   }
 }
