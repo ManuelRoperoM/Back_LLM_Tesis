@@ -31,6 +31,7 @@ export class AskUserService {
     // const userEmbedding = embeddingAskUser.embedding;
 
     // Ultimas 50 conversaciones
+    /*
     const pastConversations = await this.conversationRepo.find({
       where: { thesis: { id: data.idThesis } },
       select: [
@@ -64,6 +65,7 @@ export class AskUserService {
     // Fusionamos ambos rankings
     const merged = [...rankedByUser, ...rankedByBot];
 
+
     // Orden global
     const topConversations = merged
       .sort((a, b) => b.similarity - a.similarity)
@@ -84,9 +86,7 @@ export class AskUserService {
           `\nPregunta pasada: ${c.userMessage}\nRespuesta pasada: ${c.botResponse}\n`,
       )
       .join("\n");
-
-    console.log("ConversionContext: ", conversationContext);
-
+    */
     //Carga de contenido de la tesis :
     const thesis = await this.thesisRepo.findOne({
       where: { id: data.idThesis },
@@ -110,38 +110,61 @@ export class AskUserService {
 
     const context = importantChunks.map((c) => c.text).join("\n\n");
 
-    console.log("Contexto de la tesis: ", context);
-
     const question = `Pregunta del usuario: ${data.msge}`;
     // To Do Add the context conversation in the prompt
+    // const prompt = `
+    //   Eres un asesor académico experto en tesis universitarias. Tu objetivo es ayudar al estudiante a entender mejor su trabajo de grado respondiendo a su pregunta con base en los fragmentos relevantes de su tesis.
+
+    //   Responde de manera clara, concisa y formal. Si no hay suficiente información en el contexto para responder con certeza, indícalo explícitamente.
+
+    //   ===== CONTEXTUALIZACION =====
+
+    //   === PREGUNTA DEL ESTUDIANTE: ===
+    //   """
+    //   ${question}
+    //   """
+    //   === TITULO DE LA TESIS: ===
+    //   """
+    //   ${thesis.title}
+    //   """
+    //   === FREGMENTOS RELEVANTES DE MI TESIS ===
+    //   """
+    //   ${context}
+    //   """
+
+    //   === TEN ENCUENTA EL SIGUIENTE CONTESTO DE  CONVERSACIONES PREVIAS RELEVANTES CONTIGO ===
+    //   ${conversationContext}
+
+    //   ===== FIN CONTEXTUALIZACION =====
+
+    //   Responde de forma clara, formal y concisa.
+    //   `;
+
     const prompt = `
-      Eres un asesor académico experto en tesis universitarias. Tu objetivo es ayudar al estudiante a entender mejor su trabajo de grado respondiendo a su pregunta con base en los fragmentos relevantes de su tesis.
-      
-      Responde de manera clara, concisa y formal. Si no hay suficiente información en el contexto para responder con certeza, indícalo explícitamente.
-      
-      ===== CONTEXTUALIZACION =====
+    Eres un asesor académico experto en trabajos de grado universitarios.
+    
+    Tu función es responder la pregunta del estudiante utilizando únicamente la información relevante de su tesis cuando sea necesario.
+    
+    Instrucciones:
+    - Responde solo en lenguaje natural.
+    - No incluyas código, etiquetas, secciones, numeraciones ni fragmentos literales.
+    - No repitas la pregunta.
+    - Si la pregunta no está relacionada con la tesis, responde de forma general y breve.
+    - Si la información no está presente en el contexto, indícalo explícitamente.
+    
+    Título de la tesis:
+    ${thesis.title}
+    
+    Contexto relevante de la tesis:
+    ${context}
+    
+    Pregunta del estudiante:
+    ${question}
+    
+    Respuesta:
+    `;
 
-      === PREGUNTA DEL ESTUDIANTE: ===
-      """
-      ${question}
-      """
-      === TITULO DE LA TESIS: ===
-      """
-      ${thesis.title}
-      """
-      === FREGMENTOS RELEVANTES DE MI TESIS ===
-      """
-      ${context}
-      """
-
-      === TEN ENCUENTA EL SIGUIENTE CONTESTO DE  CONVERSACIONES PREVIAS RELEVANTES CONTIGO ===
-      ${conversationContext}
-
-      ===== FIN CONTEXTUALIZACION =====
-
-      
-      Responde de forma clara, formal y concisa.
-      `;
+    console.log("Prompt: ", prompt);
 
     const response = await this.llmService.generateAnswer(prompt);
 
