@@ -31,7 +31,7 @@ export class AskUserService {
     // const userEmbedding = embeddingAskUser.embedding;
 
     // Ultimas 50 conversaciones
-    /*
+
     const pastConversations = await this.conversationRepo.find({
       where: { thesis: { id: data.idThesis } },
       select: [
@@ -65,7 +65,6 @@ export class AskUserService {
     // Fusionamos ambos rankings
     const merged = [...rankedByUser, ...rankedByBot];
 
-
     // Orden global
     const topConversations = merged
       .sort((a, b) => b.similarity - a.similarity)
@@ -80,13 +79,13 @@ export class AskUserService {
     );
 
     // Contexto final
-    const conversationContext = uniqueRelevantConvs
+    const summarizedConversationContext = uniqueRelevantConvs
       .map(
         (c) =>
-          `\nPregunta pasada: ${c.userMessage}\nRespuesta pasada: ${c.botResponse}\n`,
+          `- Tema tratado: ${c.userMessage.slice(0, 120)}
+        Conclusión: ${c.botResponse.slice(0, 180)}`,
       )
       .join("\n");
-    */
     //Carga de contenido de la tesis :
     const thesis = await this.thesisRepo.findOne({
       where: { id: data.idThesis },
@@ -157,6 +156,10 @@ export class AskUserService {
     
     Contexto relevante de la tesis:
     ${context}
+
+
+    Resumen de conversaciones previas relevantes:
+    ${summarizedConversationContext || "No hay antecedentes relevantes."}
     
     Pregunta del estudiante:
     ${question}
