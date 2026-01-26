@@ -110,67 +110,36 @@ export class AskUserService {
     const context = importantChunks.map((c) => c.text).join("\n\n");
 
     const question = `Pregunta del usuario: ${data.msge}`;
-    // To Do Add the context conversation in the prompt
-    // const prompt = `
-    //   Eres un asesor académico experto en tesis universitarias. Tu objetivo es ayudar al estudiante a entender mejor su trabajo de grado respondiendo a su pregunta con base en los fragmentos relevantes de su tesis.
-
-    //   Responde de manera clara, concisa y formal. Si no hay suficiente información en el contexto para responder con certeza, indícalo explícitamente.
-
-    //   ===== CONTEXTUALIZACION =====
-
-    //   === PREGUNTA DEL ESTUDIANTE: ===
-    //   """
-    //   ${question}
-    //   """
-    //   === TITULO DE LA TESIS: ===
-    //   """
-    //   ${thesis.title}
-    //   """
-    //   === FREGMENTOS RELEVANTES DE MI TESIS ===
-    //   """
-    //   ${context}
-    //   """
-
-    //   === TEN ENCUENTA EL SIGUIENTE CONTESTO DE  CONVERSACIONES PREVIAS RELEVANTES CONTIGO ===
-    //   ${conversationContext}
-
-    //   ===== FIN CONTEXTUALIZACION =====
-
-    //   Responde de forma clara, formal y concisa.
-    //   `;
 
     const prompt = `
-    Eres un asesor académico experto en tesis universitarias.
-    Tu función es responder preguntas del estudiante utilizando EXCLUSIVAMENTE
-    la información contenida en los fragmentos de la tesis proporcionados.
-    
-    Reglas estrictas de respuesta:
-    - Responde en texto plano, sin bloques de código ni markdown
-    - No repitas la respuesta
-    - No incluyas explicaciones meta (ej: "según el contexto")
-    - Sé claro, formal y conciso
-    - Si la información no está en la tesis, indícalo explícitamente
-    
+    Eres un asesor académico experto en sistemas de potencia y medición eléctrica.
+    Respondes preguntas sobre una tesis universitaria usando únicamente el contexto proporcionado.
+
+    Reglas estrictas:
+    - Responde en texto plano
+    - No repitas ideas
+    - No generalices si el contexto es específico
+    - Evita definiciones genéricas
+    - Sé claro, técnico y preciso
+
+    Estructura obligatoria de la respuesta:
+    1. Respuesta directa a la pregunta
+    2. Explicación técnica breve
+    3. Relación con el trabajo de grado
+
     ===== CONTEXTO DE LA TESIS =====
-    
-    Título de la tesis:
-    "${thesis.title}"
-    
+    Título: "${thesis.title}"
+
     Fragmentos relevantes:
     "${context}"
-    
-    ===== MEMORIA CONVERSACIONAL RELEVANTE (uso interno) =====
-    Usa esta información solo para mantener coherencia y evitar redundancias.
-    No la menciones ni la repitas en la respuesta.
-    
+
+    ===== MEMORIA CONVERSACIONAL (uso interno) =====
     ${summarizedConversationContext}
-    
+
     ===== PREGUNTA DEL ESTUDIANTE =====
     "${question}"
-    
-    ===== FIN DEL CONTEXTO =====
-    
-    Redacta una única respuesta clara y académica.
+
+    Redacta una única respuesta coherente y académica.
     `;
 
     console.log("Prompt: ", prompt);
