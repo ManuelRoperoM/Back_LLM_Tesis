@@ -75,6 +75,8 @@ export class UploadTesisService {
       throw new Error("Archivos no encontrado");
     }
     // Extraer texto del pdf:
+    console.log("Hola desde genear text");
+
     const buffer = fs.readFileSync(filePath);
     const data = await pdfParse(buffer);
     const rawText = data.text;
