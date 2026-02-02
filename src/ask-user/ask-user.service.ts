@@ -163,19 +163,23 @@ export class AskUserService {
     FORMA DE RESPONDER
     ══════════════════════════════════════════
 
-    Tu respuesta DEBE seguir esta estructura:
-
-
     Organiza tu respuesta INTERNAMENTE siguiendo esta lógica:
-    - Primero responde directamente la pregunta.
-    - Luego fundamenta la respuesta en la tesis.
-    - Finalmente, agrega una aclaración o profundización solo si aporta valor.
-    
+    - Responde directamente la pregunta.
+    - Fundamenta la respuesta en la tesis.
+    - Agrega una aclaración solo si aporta valor técnico.
+
+    Limita la respuesta a un máximo de 3 ideas o mejoras concretas.
+    No repitas una misma idea usando sinónimos.
+
     NO escribas títulos, numeraciones, etiquetas ni marcadores.
     NO incluyas frases como "Respuesta directa", "Fundamento en la tesis",
-    "inicio de respuesta" o similares.
+    "inicio de respuesta", "en resumen" o similares.
 
-    La respuesta final debe ser un texto continuo, claro y académico.
+    No incluyas conclusiones generales, reflexiones amplias
+    ni factores externos si no son solicitados explícitamente.
+
+    La respuesta final debe ser un texto continuo,
+    claro, académico y conciso.
 
     ══════════════════════════════════════════
     CASOS ESPECIALES
