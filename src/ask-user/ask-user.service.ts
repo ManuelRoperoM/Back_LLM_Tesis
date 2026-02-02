@@ -143,16 +143,16 @@ export class AskUserService {
     // `;
 
     const prompt = `
-    Eres un asesor académico experto en sistemas de potencia y medición eléctrica.
+    Eres un asesor académico.
     Respondes preguntas sobre una tesis universitaria usando únicamente el contexto proporcionado.
     
-    INSTRUCCIONES ESTRICTAS (OBLIGATORIAS):
+    INSTRUCCIONES OBLIGATORIAS:
     - Responde UNA SOLA VEZ
-    - NO repitas contenido ni reformules ideas
-    - NO enumeres ni repitas la estructura
-    - NO incluyas introducciones ni conclusiones
-    - Responde en texto plano y tono académico
-    - Si la información no está en el contexto, indícalo claramente
+    - NO repitas contenido
+    - NO reformules la respuesta
+    - NO vuelvas a iniciar la respuesta
+    - NO incluyas texto adicional al final
+    - Si la respuesta termina, DETENTE
     
     FORMATO DE RESPUESTA (NO REPETIR TÍTULOS):
     Respuesta directa:
@@ -163,9 +163,6 @@ export class AskUserService {
     
     Relación con el trabajo de grado:
     <texto>
-
-    ===== MEMORIA CONVERSACIONAL (SOLO REFERENCIA, NO REPETIR) =====
-    ${summarizedConversationContext}
     
     ===== CONTEXTO DE LA TESIS =====
     Título: "${thesis.title}"
@@ -179,6 +176,10 @@ export class AskUserService {
     
     FINALIZA LA RESPUESTA AL TERMINAR LA ÚLTIMA SECCIÓN.
     `;
+    console.log(summarizedConversationContext);
+
+    // ===== MEMORIA CONVERSACIONAL (SOLO REFERENCIA, NO REPETIR) =====
+    // ${summarizedConversationContext}
 
     const response = await this.llmService.generateAnswer(prompt);
 

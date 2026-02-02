@@ -44,7 +44,6 @@ export class LlmService {
           temperature: temperature,
           max_gen_len: maxTokens,
           top_p: 0.9,
-          stop_sequences: ["\nRespuesta directa:", "\n\nRespuesta directa:"],
         }),
       });
 
