@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as pdfParse from "pdf-parse";
 import rake from "rake-js";
 import { EmbeddingService } from "src/embedding/embedding.service";
-import { encoding_for_model } from "tiktoken";
+import { encodingForModel } from "tiktoken-node";
 import { ConfigService } from "@nestjs/config";
 import { Tesis } from "./entites/tesis.entity";
 import { ChunkTesis } from "./entites/chunks-tesis.entity";
@@ -96,7 +96,7 @@ export class UploadTesisService {
   private chunkText(text: string, maxTokens: number): any {
     const modelName = "gpt-3.5-turbo";
     const overlap: number = 50;
-    const encoder = encoding_for_model(modelName);
+    const encoder = encodingForModel(modelName);
     const tokens = encoder.encode(text);
     const chunks = [];
     let chunk = 1;
@@ -106,7 +106,8 @@ export class UploadTesisService {
     while (start < tokens.length) {
       const end = Math.min(start + maxTokens, tokens.length);
       const chunkTokens = tokens.slice(start, end);
-      const chunkText = new TextDecoder().decode(encoder.decode(chunkTokens));
+      const chunkText = encoder.decode(chunkTokens);
+      // const chunkText = new TextDecoder().decode(encoder.decode(chunkTokens));
       chunks.push({
         chunk: chunk.toString(),
         texto: chunkText,
@@ -115,7 +116,7 @@ export class UploadTesisService {
       start += maxTokens - overlap; // mueve la ventana con solapamiento
       chunk++;
     }
-    encoder.free();
+    // encoder.free();
     return chunks;
   }
 
