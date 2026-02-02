@@ -143,18 +143,18 @@ export class AskUserService {
     // `;
 
     const prompt = `
-    Eres un asesor académico.
+    Eres un asesor académico experto.
     Respondes preguntas sobre una tesis universitaria usando únicamente el contexto proporcionado.
     
-    INSTRUCCIONES OBLIGATORIAS:
-    - Responde UNA SOLA VEZ
-    - NO repitas contenido
-    - NO reformules la respuesta
-    - NO vuelvas a iniciar la respuesta
-    - NO incluyas texto adicional al final
-    - Si la respuesta termina, DETENTE
+    DEBES cumplir estrictamente estas reglas:
+    1. Genera UNA SOLA respuesta completa.
+    2. Usa exactamente las secciones indicadas.
+    3. Escribe cada sección UNA SOLA VEZ.
+    4. Cuando termines la última sección, DETENTE y no continúes generando texto.
     
-    FORMATO DE RESPUESTA (NO REPETIR TÍTULOS):
+    FORMATO OBLIGATORIO (no repetir encabezados):
+    
+    [INICIO_RESPUESTA]
     Respuesta directa:
     <texto>
     
@@ -163,6 +163,7 @@ export class AskUserService {
     
     Relación con el trabajo de grado:
     <texto>
+    [FIN_RESPUESTA]
     
     ===== CONTEXTO DE LA TESIS =====
     Título: "${thesis.title}"
@@ -170,12 +171,10 @@ export class AskUserService {
     Fragmentos relevantes:
     ${context}
     
-    
     ===== PREGUNTA DEL ESTUDIANTE =====
     ${question}
-    
-    FINALIZA LA RESPUESTA AL TERMINAR LA ÚLTIMA SECCIÓN.
     `;
+
     console.log(summarizedConversationContext);
 
     // ===== MEMORIA CONVERSACIONAL (SOLO REFERENCIA, NO REPETIR) =====
