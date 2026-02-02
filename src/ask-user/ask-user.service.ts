@@ -142,6 +142,39 @@ export class AskUserService {
     // Redacta una única respuesta coherente y académica.
     // `;
 
+    // const prompt = `
+    // Eres un asesor académico experto.
+    // Respondes preguntas sobre una tesis universitaria usando únicamente el contexto proporcionado.
+
+    // DEBES cumplir estrictamente estas reglas:
+    // 1. Genera UNA SOLA respuesta completa.
+    // 2. Usa exactamente las secciones indicadas.
+    // 3. Escribe cada sección UNA SOLA VEZ.
+    // 4. Cuando termines la última sección, DETENTE y no continúes generando texto.
+
+    // FORMATO OBLIGATORIO (no repetir encabezados):
+
+    // [INICIO_RESPUESTA]
+    // Respuesta directa:
+    // <texto>
+
+    // Explicación técnica breve:
+    // <texto>
+
+    // Relación con el trabajo de grado:
+    // <texto>
+    // [FIN_RESPUESTA]
+
+    // ===== CONTEXTO DE LA TESIS =====
+    // Título: "${thesis.title}"
+
+    // Fragmentos relevantes:
+    // ${context}
+
+    // ===== PREGUNTA DEL ESTUDIANTE =====
+    // ${question}
+    // `;
+
     const prompt = `
     Eres un asesor académico experto.
     Respondes preguntas sobre una tesis universitaria usando únicamente el contexto proporcionado.
@@ -168,14 +201,12 @@ export class AskUserService {
     ===== CONTEXTO DE LA TESIS =====
     Título: "${thesis.title}"
     
-    Fragmentos relevantes:
-    ${context}
-    
     ===== PREGUNTA DEL ESTUDIANTE =====
     ${question}
     `;
 
     console.log(summarizedConversationContext);
+    console.log("Contexto: ", context);
 
     // ===== MEMORIA CONVERSACIONAL (SOLO REFERENCIA, NO REPETIR) =====
     // ${summarizedConversationContext}
