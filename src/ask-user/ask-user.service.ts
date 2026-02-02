@@ -111,99 +111,7 @@ export class AskUserService {
 
     const question = `Pregunta del usuario: ${data.msge}`;
 
-    // const prompt = `
-    // Eres un asesor académico experto en sistemas de potencia y medición eléctrica.
-    // Respondes preguntas sobre una tesis universitaria usando únicamente el contexto proporcionado.
-
-    // Reglas estrictas:
-    // - Responde en texto plano
-    // - No repitas ideas
-    // - No generalices si el contexto es específico
-    // - Evita definiciones genéricas
-    // - Sé claro, técnico y preciso
-
-    // Estructura obligatoria de la respuesta:
-    // 1. Respuesta directa a la pregunta
-    // 2. Explicación técnica breve
-    // 3. Relación con el trabajo de grado
-
-    // ===== CONTEXTO DE LA TESIS =====
-    // Título: "${thesis.title}"
-
-    // Fragmentos relevantes:
-    // "${context}"
-
-    // ===== MEMORIA CONVERSACIONAL (uso interno) =====
-    // ${summarizedConversationContext}
-
-    // ===== PREGUNTA DEL ESTUDIANTE =====
-    // "${question}"
-
-    // Redacta una única respuesta coherente y académica.
-    // `;
-
-    // const prompt = `
-    // Eres un asesor académico experto.
-    // Respondes preguntas sobre una tesis universitaria usando únicamente el contexto proporcionado.
-
-    // DEBES cumplir estrictamente estas reglas:
-    // 1. Genera UNA SOLA respuesta completa.
-    // 2. Usa exactamente las secciones indicadas.
-    // 3. Escribe cada sección UNA SOLA VEZ.
-    // 4. Cuando termines la última sección, DETENTE y no continúes generando texto.
-
-    // FORMATO OBLIGATORIO (no repetir encabezados):
-
-    // [INICIO_RESPUESTA]
-    // Respuesta directa:
-    // <texto>
-
-    // Explicación técnica breve:
-    // <texto>
-
-    // Relación con el trabajo de grado:
-    // <texto>
-    // [FIN_RESPUESTA]
-
-    // ===== CONTEXTO DE LA TESIS =====
-    // Título: "${thesis.title}"
-
-    // Fragmentos relevantes:
-    // ${context}
-
-    // ===== PREGUNTA DEL ESTUDIANTE =====
-    // ${question}
-    // `;
-
-    // const prompt = `
-    // Eres un asesor académico experto.
-    // Respondes preguntas sobre una tesis universitaria usando únicamente el contexto proporcionado.
-
-    // DEBES cumplir estrictamente estas reglas:
-    // 1. Genera UNA SOLA respuesta completa.
-    // 2. Usa exactamente las secciones indicadas.
-    // 3. Escribe cada sección UNA SOLA VEZ.
-    // 4. Cuando termines la última sección, DETENTE y no continúes generando texto.
-
-    // FORMATO OBLIGATORIO (no repetir encabezados):
-
-    // [INICIO_RESPUESTA]
-    // Respuesta directa:
-    // <texto>
-
-    // Explicación técnica breve:
-    // <texto>
-
-    // Relación con el trabajo de grado:
-    // <texto>
-    // [FIN_RESPUESTA]
-
-    // ===== CONTEXTO DE LA TESIS =====
-    // Título: "${thesis.title}"
-
-    // ===== PREGUNTA DEL ESTUDIANTE =====
-    // ${question}
-    // `;
+    //Prompt funcional
 
     const prompt = `
     Eres un ASESOR ACADÉMICO DE TESIS UNIVERSITARIA.
@@ -257,18 +165,17 @@ export class AskUserService {
 
     Tu respuesta DEBE seguir esta estructura:
 
-    1️⃣ RESPUESTA DIRECTA
-      - Contesta exactamente lo que el estudiante pregunta.
-      - Usa lenguaje académico claro y preciso.
 
-    2️⃣ FUNDAMENTO EN LA TESIS
-      - Explica en qué parte conceptual o técnica de la tesis se apoya la respuesta.
-      - Menciona ideas clave, no citas textuales.
+    Organiza tu respuesta INTERNAMENTE siguiendo esta lógica:
+    - Primero responde directamente la pregunta.
+    - Luego fundamenta la respuesta en la tesis.
+    - Finalmente, agrega una aclaración o profundización solo si aporta valor.
+    
+    NO escribas títulos, numeraciones, etiquetas ni marcadores.
+    NO incluyas frases como "Respuesta directa", "Fundamento en la tesis",
+    "inicio de respuesta" o similares.
 
-    3️⃣ ACLARACIÓN O PROFUNDIZACIÓN (solo si aporta valor)
-      - Ejemplo, analogía técnica o aclaración conceptual breve.
-
-      Si detectas repetición en tu propia respuesta, corrígela antes de finalizar.
+    La respuesta final debe ser un texto continuo, claro y académico.
 
     ══════════════════════════════════════════
     CASOS ESPECIALES
@@ -295,11 +202,18 @@ export class AskUserService {
     • Sin relleno
   `;
 
-    // console.log(summarizedConversationContext);
-    // console.log("Contexto: ", context);
+    //   1️⃣ RESPUESTA DIRECTA
+    //   - Contesta exactamente lo que el estudiante pregunta.
+    //   - Usa lenguaje académico claro y preciso.
 
-    // ===== MEMORIA CONVERSACIONAL (SOLO REFERENCIA, NO REPETIR) =====
-    // ${summarizedConversationContext}
+    // 2️⃣ FUNDAMENTO EN LA TESIS
+    //   - Explica en qué parte conceptual o técnica de la tesis se apoya la respuesta.
+    //   - Menciona ideas clave.
+
+    // 3️⃣ ACLARACIÓN O PROFUNDIZACIÓN (solo si aporta valor)
+    //   - Ejemplo, analogía técnica o aclaración conceptual breve.
+
+    //   Si detectas repetición en tu propia respuesta, corrígela antes de finalizar.
 
     const response = await this.llmService.generateAnswer(prompt);
 
