@@ -31,7 +31,7 @@ export class LlmService {
    */
   async generateAnswer(
     prompt: string,
-    temperature = 0.2,
+    temperature = 0.15,
     maxTokens = 500,
   ): Promise<string> {
     try {
@@ -43,7 +43,7 @@ export class LlmService {
           prompt,
           temperature: temperature,
           max_gen_len: maxTokens,
-          top_p: 0.9,
+          top_p: 0.85,
         }),
       });
 
