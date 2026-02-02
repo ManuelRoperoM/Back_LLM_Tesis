@@ -32,7 +32,7 @@ export class LlmService {
   async generateAnswer(
     prompt: string,
     temperature = 0.2,
-    maxTokens = 600,
+    maxTokens = 300,
   ): Promise<string> {
     try {
       const command = new InvokeModelCommand({
@@ -43,6 +43,8 @@ export class LlmService {
           prompt,
           temperature: temperature,
           max_gen_len: maxTokens,
+          top_p: 0.9,
+          stop_sequences: ["\nRespuesta directa:", "\n\nRespuesta directa:"],
         }),
       });
 

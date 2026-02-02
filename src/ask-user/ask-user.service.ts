@@ -163,6 +163,9 @@ export class AskUserService {
     
     Relación con el trabajo de grado:
     <texto>
+
+    ===== MEMORIA CONVERSACIONAL (SOLO REFERENCIA, NO REPETIR) =====
+    ${summarizedConversationContext}
     
     ===== CONTEXTO DE LA TESIS =====
     Título: "${thesis.title}"
@@ -170,8 +173,6 @@ export class AskUserService {
     Fragmentos relevantes:
     ${context}
     
-    ===== MEMORIA CONVERSACIONAL (SOLO REFERENCIA, NO REPETIR) =====
-    ${summarizedConversationContext}
     
     ===== PREGUNTA DEL ESTUDIANTE =====
     ${question}
