@@ -179,8 +179,6 @@ export class AskUserService {
     FINALIZA LA RESPUESTA AL TERMINAR LA ÚLTIMA SECCIÓN.
     `;
 
-    console.log("Prompt: ", prompt);
-
     const response = await this.llmService.generateAnswer(prompt);
 
     const cleanResponse = this.cleanLLMResponse(response);
