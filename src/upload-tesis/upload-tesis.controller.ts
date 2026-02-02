@@ -76,7 +76,7 @@ export class UploadTesisController {
     }),
   )
   async processFile(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: any,
     @Body() body: { idUser: number; title: string },
   ) {
     if (!file) {
