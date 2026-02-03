@@ -34,6 +34,7 @@ export class UploadTesisService {
     title: string,
   ): Promise<any> {
     const thesisData = await this.generateText(nameFile);
+
     const user = await this.userRepository.findOneBy({ id: idUser });
     if (!user) {
       throw new Error(`Usuario con id ${idUser} no encontrado`);
@@ -81,7 +82,6 @@ export class UploadTesisService {
     if (header !== "%PDF-") {
       throw new Error("El archivo no es un PDF válido");
     }
-
     const data = await pdfParse(buffer);
     const rawText = data.text;
     const text: string = this.cleanText(rawText);
@@ -111,18 +111,18 @@ export class UploadTesisService {
 
     while (start < tokens.length) {
       const end = Math.min(start + maxTokens, tokens.length);
-      const chunkTokens = tokens.slice(start, end);
-      const chunkText = encoder.decode(chunkTokens);
-      // const chunkText = new TextDecoder().decode(encoder.decode(chunkTokens));
+      const startChar = Math.floor((start / tokens.length) * text.length);
+      const endChar = Math.floor((end / tokens.length) * text.length);
+      const chunkText = text.slice(startChar, endChar);
       chunks.push({
         chunk: chunk.toString(),
-        texto: chunkText,
+        texto: chunkText.trim(),
       });
 
       start += maxTokens - overlap; // mueve la ventana con solapamiento
       chunk++;
     }
-    // encoder.free();
+
     return chunks;
   }
 
